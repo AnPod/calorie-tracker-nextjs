@@ -58,34 +58,42 @@ export async function PUT(request: Request) {
 
   const validatedData = parseResult.data;
 
-  const existing = await db
-    .select()
-    .from(userSettings)
-    .where(eq(userSettings.userId, session.user.id))
-    .limit(1);
-
-  const updateData: Record<string, unknown> = {
-    ...validatedData,
-    updatedAt: new Date(),
-  };
-
-  if (existing.length === 0) {
-    const newSettings = await db.insert(userSettings).values({
-      userId: session.user.id,
-      dailyCalorieGoal: validatedData.dailyCalorieGoal ?? 2000,
-      age: validatedData.age,
-      gender: validatedData.gender,
-      weightKg: validatedData.weightKg,
-      heightCm: validatedData.heightCm,
-      hasCompletedOnboarding: validatedData.hasCompletedOnboarding ?? false,
-    }).returning();
-    return NextResponse.json(newSettings[0]);
-  } else {
-    const updated = await db
-      .update(userSettings)
-      .set(updateData)
+  try {
+    const existing = await db
+      .select()
+      .from(userSettings)
       .where(eq(userSettings.userId, session.user.id))
-      .returning();
-    return NextResponse.json(updated[0]);
+      .limit(1);
+
+    const updateData: Record<string, unknown> = {
+      ...validatedData,
+      updatedAt: new Date(),
+    };
+
+    if (existing.length === 0) {
+      const newSettings = await db.insert(userSettings).values({
+        userId: session.user.id,
+        dailyCalorieGoal: validatedData.dailyCalorieGoal ?? 2000,
+        age: validatedData.age,
+        gender: validatedData.gender,
+        weightKg: validatedData.weightKg,
+        heightCm: validatedData.heightCm,
+        hasCompletedOnboarding: validatedData.hasCompletedOnboarding ?? false,
+      }).returning();
+      return NextResponse.json(newSettings[0]);
+    } else {
+      const updated = await db
+        .update(userSettings)
+        .set(updateData)
+        .where(eq(userSettings.userId, session.user.id))
+        .returning();
+      return NextResponse.json(updated[0]);
+    }
+  } catch (error) {
+    console.error('[Settings API] Error:', error);
+    return NextResponse.json(
+      { error: 'Failed to save settings', details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
   }
 }
