@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+:root {
+  /* Bento Box Theme - Light Pastel */
+  --background: #f4f6fb; /* Soft, slightly cool off-white */
+  --foreground: #1e293b; /* Slate 800 for high readability */
+  
+  /* Primary accents (Purple/Blue from the original design, but modernized) */
+  --primary: #7c3aed; /* Violet 600 */
+  --primary-gradient-start: #8b5cf6;
+  --primary-gradient-end: #3b82f6;
+
+  /* Glassmorphic Surfaces */
+  --surface-base: rgba(255, 255, 255, 0.75);
+  --surface-border: rgba(255, 255, 255, 0.5);
+  --surface-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  
+  /* Macros */
+  --macro-protein: #10b981; /* Emerald 500 */
+  --macro-carbs: #0ea5e9; /* Sky 500 */
+  --macro-fat: #f59e0b; /* Amber 500 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  --color-primary: var(--primary);
+  --color-protein: var(--macro-protein);
+  --color-carbs: var(--macro-carbs);
+  --color-fat: var(--macro-fat);
+  
+  --color-surface: var(--surface-base);
+  --color-surface-border: var(--surface-border);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark Mode Bento Box */
+    --background: #0f172a; /* Slate 900 */
+    --foreground: #f8fafc; /* Slate 50 */
+    
+    --surface-base: rgba(30, 41, 59, 0.75); /* Slate 800 with opacity */
+    --surface-border: rgba(255, 255, 255, 0.1);
+    --surface-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    
+    /* Slightly muted macros for dark mode */
+    --macro-protein: #059669; 
+    --macro-carbs: #0284c7;
+    --macro-fat: #d97706;
+  }
+}
+
+body {
+  background-color: var(--background);
+  /* A subtle, fixed background gradient to give the glass something to blur against */
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(253,16%,7%,0) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(225,39%,30%,0) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(339,49%,30%,0) 0, transparent 50%);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  
+  /* Prevent overscroll bounce showing white on mobile */
+  overscroll-behavior-y: none; 
+}
+
+/* Custom utilities */
+@utility glass {
+  background-color: var(--surface-base);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--surface-shadow);
+}
+
+@utility bg-gradient-brand {
+  background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+}
+
+@utility text-gradient-brand {
+  background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

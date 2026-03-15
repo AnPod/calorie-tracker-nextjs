@@ -1,0 +1,42 @@
+{
+  "date": "2026-03-13",
+  "url": "https://myfitnesspal-clone-sandy.vercel.app",
+  "healthScore": 92,
+  "issues": [
+    {
+      "id": "ISSUE-001",
+      "title": "Search Result Buttons Lack Food Labels",
+      "severity": "Medium",
+      "category": "UX"
+    },
+    {
+      "id": "ISSUE-002",
+      "title": "Search API Response Time is Slow (10-15s)",
+      "severity": "Medium",
+      "category": "Performance"
+    }
+  ],
+  "categoryScores": {
+    "console": 100,
+    "links": 100,
+    "visual": 92,
+    "functional": 92,
+    "ux": 85,
+    "performance": 85,
+    "content": 100,
+    "accessibility": 100
+  },
+  "featuresTested": [
+    "Search Foods",
+    "Loading Spinner",
+    "Add Food to Log",
+    "Custom Food Creation",
+    "Search Custom Foods",
+    "Saved Meals Dialog",
+    "Clear Today's Log",
+    "Export/Import Data",
+    "Mobile Responsive"
+  ],
+  "consoleErrors": 0,
+  "screenshots": 15
+}

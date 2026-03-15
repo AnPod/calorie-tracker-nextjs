@@ -1,0 +1,35 @@
+{
+  "date": "2026-03-15",
+  "url": "https://calorie-tracker-nextjs.vercel.app",
+  "healthScore": 75,
+  "issues": [
+    {
+      "id": "ISSUE-001",
+      "title": "Onboarding page returns 404 on Vercel",
+      "severity": "Critical",
+      "category": "Functional"
+    },
+    {
+      "id": "ISSUE-002",
+      "title": "Onboarding code not deployed to Vercel",
+      "severity": "Critical",
+      "category": "Functional"
+    },
+    {
+      "id": "ISSUE-003",
+      "title": "OpenFoodFacts API slow/unresponsive",
+      "severity": "Low",
+      "category": "External"
+    }
+  ],
+  "categoryScores": {
+    "console": 100,
+    "links": 100,
+    "visual": 100,
+    "functional": 50,
+    "ux": 100,
+    "performance": 100,
+    "content": 100,
+    "accessibility": 100
+  }
+}

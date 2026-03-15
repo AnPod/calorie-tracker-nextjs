@@ -1,0 +1,19 @@
+# Test files
+test/
+*.spec.js
+*.test.js
+
+# QA reports
+.gstack/
+
+# Documentation
+VERCEL_DEPLOY_PLAN.md
+README.md
+
+# Git
+.git/
+.gitignore
+
+# Local config
+.env
+.env.local
