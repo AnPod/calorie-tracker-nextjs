@@ -79,8 +79,11 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        const userId = crypto.randomUUID();
+        
         try {
           const db = getDb();
+          
           const existingUser = await db
             .select()
             .from(schema.users)
@@ -99,33 +102,26 @@ export const authOptions: NextAuthOptions = {
           }
 
           // Create new user
-          console.log('[Auth] Creating new user');
-          const newUser = await db
+          console.log('[Auth] Creating new user with ID:', userId);
+          await db
             .insert(schema.users)
             .values({
-              id: crypto.randomUUID(),
+              id: userId,
               email: credentials.email,
               name: credentials.email.split('@')[0],
-            })
-            .returning();
+            });
 
-          console.log('[Auth] User created:', newUser[0].id);
+          console.log('[Auth] User created successfully');
 
           return {
-            id: newUser[0].id,
-            email: newUser[0].email,
-            name: newUser[0].name,
-            image: null,
-          };
-        } catch (error) {
-          console.error('[Auth] Database error in authorize:', error);
-          // Fallback: create user without database
-          return {
-            id: `user-${credentials.email}`,
+            id: userId,
             email: credentials.email,
             name: credentials.email.split('@')[0],
             image: null,
           };
+        } catch (error) {
+          console.error('[Auth] Database error:', error);
+          throw new Error('Authentication failed. Please try again.');
         }
       },
     }),
