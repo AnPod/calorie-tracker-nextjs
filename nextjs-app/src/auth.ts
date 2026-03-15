@@ -45,16 +45,14 @@ function createDbClient() {
   return createClient({ url, authToken });
 }
 
-// Create database instance
-let db: ReturnType<typeof drizzle<typeof schema>> | null = null;
-let dbInitError: Error | null = null;
+let dbInstance: ReturnType<typeof drizzle<typeof schema>> | null = null;
 
-try {
-  const client = createDbClient();
-  db = drizzle(client, { schema });
-} catch (error) {
-  dbInitError = error as Error;
-  console.error('[Auth] Database initialization error:', error);
+function getDb() {
+  if (!dbInstance) {
+    const client = createDbClient();
+    dbInstance = drizzle(client, { schema });
+  }
+  return dbInstance;
 }
 
 export const authOptions: NextAuthOptions = {
@@ -81,19 +79,8 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // Check database initialization
-        if (!db) {
-          console.error('[Auth] Database not initialized:', dbInitError);
-          // Fallback: create user without database
-          return {
-            id: `user-${credentials.email}`,
-            email: credentials.email,
-            name: credentials.email.split('@')[0],
-            image: null,
-          };
-        }
-
         try {
+          const db = getDb();
           const existingUser = await db
             .select()
             .from(schema.users)
