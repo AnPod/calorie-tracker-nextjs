@@ -8,8 +8,8 @@ let dbInstance: ReturnType<typeof drizzle<typeof schema>> | null = null;
 let initError: Error | null = null;
 
 function createDbClient() {
-  const url = process.env.TURSO_DATABASE_URL;
-  const authToken = process.env.TURSO_AUTH_TOKEN;
+  const url = process.env.TURSO_DATABASE_URL?.trim();
+  const authToken = process.env.TURSO_AUTH_TOKEN?.trim();
 
   console.log('[DB] Initializing. URL present:', !!url, 'Token present:', !!authToken);
 
