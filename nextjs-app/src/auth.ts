@@ -1,8 +1,7 @@
 import NextAuth, { type NextAuthOptions, type User, type Session, getServerSession } from 'next-auth';
 import { type JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { createClient } from '@libsql/client';
-import { drizzle } from 'drizzle-orm/libsql';
+import { db } from './db';
 import * as schema from './db/schema';
 import { eq } from 'drizzle-orm';
 
@@ -26,33 +25,6 @@ declare module 'next-auth/jwt' {
   interface JWT {
     id?: string;
   }
-}
-
-// Initialize database client once
-// This works better in serverless than dynamic requires
-function createDbClient() {
-  const url = process.env.TURSO_DATABASE_URL || 'file:./local.db';
-  const authToken = process.env.TURSO_AUTH_TOKEN;
-
-  // For local development
-  if (url.includes('localhost') || url.includes('dummy') || !authToken) {
-    console.log('[Auth] Using local SQLite database');
-    return createClient({ url: 'file:./local.db' });
-  }
-
-  // For Turso production
-  console.log('[Auth] Using Turso database:', url.replace(/\.[^.]+$/, '...'));
-  return createClient({ url, authToken });
-}
-
-let dbInstance: ReturnType<typeof drizzle<typeof schema>> | null = null;
-
-function getDb() {
-  if (!dbInstance) {
-    const client = createDbClient();
-    dbInstance = drizzle(client, { schema });
-  }
-  return dbInstance;
 }
 
 export const authOptions: NextAuthOptions = {
@@ -82,8 +54,6 @@ export const authOptions: NextAuthOptions = {
         const userId = crypto.randomUUID();
         
         try {
-          const db = getDb();
-          
           const existingUser = await db
             .select()
             .from(schema.users)
@@ -131,6 +101,10 @@ export const authOptions: NextAuthOptions = {
     jwt: async ({ token, user }: { token: JWT; user?: User }): Promise<JWT> => {
       if (user) {
         token.id = user.id;
+      }
+      // Invalidate legacy user-{email} session IDs that were never written to the DB
+      if (token.id && token.id.startsWith('user-') && token.id.includes('@')) {
+        token.id = undefined;
       }
       return token;
     },

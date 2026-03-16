@@ -11,6 +11,8 @@ function createDbClient() {
   const url = process.env.TURSO_DATABASE_URL;
   const authToken = process.env.TURSO_AUTH_TOKEN;
 
+  console.log('[DB] Initializing. URL present:', !!url, 'Token present:', !!authToken);
+
   // Check if we have real Turso credentials
   if (url &&
       authToken &&
@@ -18,7 +20,7 @@ function createDbClient() {
       !url.includes('dummy') &&
       authToken !== 'dummy-token-for-build-testing') {
     // Use Turso
-    console.log('Using Turso database');
+    console.log('[DB] Using Turso database:', url.substring(0, 30) + '...');
     return createClient({
       url,
       authToken,
@@ -27,7 +29,7 @@ function createDbClient() {
 
   // Fallback to local SQLite file
   // libsql client supports file: URLs natively
-  console.log('Using local SQLite file for development');
+  console.log('[DB] Using local SQLite file for development');
   return createClient({
     url: 'file:./local.db',
   });

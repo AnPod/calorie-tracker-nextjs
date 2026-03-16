@@ -22,17 +22,25 @@ export async function GET() {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const settings = await db
-    .select()
-    .from(userSettings)
-    .where(eq(userSettings.userId, session.user.id))
-    .limit(1);
+  try {
+    const settings = await db
+      .select()
+      .from(userSettings)
+      .where(eq(userSettings.userId, session.user.id))
+      .limit(1);
 
-  if (settings.length === 0) {
-    return NextResponse.json({ dailyCalorieGoal: 2000 });
+    if (settings.length === 0) {
+      return NextResponse.json({ dailyCalorieGoal: 2000 });
+    }
+
+    return NextResponse.json(settings[0]);
+  } catch (error) {
+    console.error('[Settings API GET] Error:', error);
+    return NextResponse.json(
+      { error: 'Failed to load settings', details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json(settings[0]);
 }
 
 export async function PUT(request: Request) {
